@@ -1,78 +1,50 @@
-/*
- * bot.js
- *
- * In this file:
- * - received message from a connected channel will be transformed with Recast.AI SDK
- * - received message from test command will be processed by Recast.AI
- *   You can run this command for testing:
- *   curl -X "POST" "http://localhost:5000" -d '{"text": "YOUR_TEXT"}' -H "Content-Type: application/json; charset=utf-8"
- *
- *
- * The Recast.AI SDK will handle the message and call your reply bot function (ie. replyMessage function)
- */
+import { replyMessage, replyButton } from './facebook.js'
+import config from './../config.js'
+import recastai from 'recastai'
 
-const recastai = require('recastai').default
+const client = new recastai(config.recastToken)
 
-const replyMessage = require('./message')
+function handleMessage(event) {
+  const senderID = event.sender.id
+  const messageText = event.message.text
+  const messageAttachments = event.message.attachments
+  if (messageText) {
+    client.request.converseText(messageText, { conversationToken: senderID }).then((res) => {
+      const reply = res.reply()               /* To get the first reply of your bot. */
+      const replies = res.replies             /* An array of all your replies */
+      const action = res.action               /* Get the object action. You can use 'action.done' to trigger a specification action when it's at true. */
 
-// Instantiate Recast.AI SDK
-const client = new recastai(process.env.REQUEST_TOKEN)
-
-/*
- * Main bot function
- * Parameters are:
- * - body: Request body
- * - response: Response of your server (can be a blank object if not needed: {})
- * - callback: Callback is a function called by Recast.AI hosting system when your code will be hosted
- */
-export const bot = (body, response, callback) => {
-  if (body.message) {
-    /*
-    * Call the Recast.AI SDK function to handle message from Bot Connector
-    * This function will:
-    * - Return a response with the status code 200
-    * - Create a Message object, easily usable in your code
-    * - Call the 'replyMessage' function, with this Message object in parameter
-    *
-    * If you want to edit the behaviour of your code bot, depending on user input,
-    * go to /src/message.js file and write your own code under "YOUR OWN CODE" comment.
-    */
-    client.connect.handleMessage({ body }, response, replyMessage)
-
-    /*
-     * This function is called by Recast.AI hosting system when your code will be hosted
-     */
-    callback(null, { result: 'Bot answered :)' })
-  } else if (body.text) {
-    /*
-    * If your request comes from the testing route
-    * ie curl -X "POST" "https://localhost:5000" -d '{"text": "YOUR_TEXT"}' -H "Content-Type: application/json; charset=utf-8"
-    * It just sends it to Recast.AI and returns replies
-    */
-    client.request.converseText(body.text, { conversationToken: process.env.CONVERSATION_TOKEN || null })
-      .then((res) => {
-        if (res.reply()) {
-          /*
-           * If response received from Recast.AI contains a reply
-           */
-          callback(null, {
-            reply: res.reply(),
-            conversationToken: res.conversationToken,
-          })
-        } else {
-          /*
-           * If response received from Recast.AI does not contain any reply
-           */
-          callback(null, {
-            reply: 'No reply :(',
-            conversationToken: res.conversationToken,
-          })
+      if (!reply) {
+        const options = {
+          messageText: null,
+          buttonTitle: 'My first button',    /* Option of your button. */
+          buttonUrl: 'https://recast.ai/',   /* If you like more option check out ./facebook.js the function replyButton, and look up */
+          buttonType: 'web_url',             /* the facebook doc for button https://developers.facebook.com/docs/messenger-platform/send-api-reference#message */
+          elementsTitle: 'I don\'t get it :(',
         }
-      })
-      .catch((err) => {
-        callback(err)
-      })
-  } else {
-    callback('No text provided')
+        replyButton(senderID, options)        /* to reply a button */
+      } else {
+        if (action && action.done === true) {
+          console.log('action is done')
+          // Use external services: use res.memory('notion') if you got a notion from this action
+        }
+        let promise = Promise.resolve()
+        replies.forEach(rep => {
+          promise = promise.then(() => replyMessage(senderID,rep))
+        })
+        promise.then(() => {
+          console.log('ok')
+        }).catch(err => {
+          console.log(err)
+        })
+      }
+    }).catch(err => {
+      console.log(err)
+    })
+  } else if (messageAttachments) {
+    replyMessage(senderID, 'Message with attachment received')
   }
+}
+module.exports = {
+  handleMessage,
 }

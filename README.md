@@ -1,122 +1,197 @@
-# Recast.AI starter kit NodeJS
+# Start coding your bot: Recast.AI + Facebook messenger
 
-A starter kit for developing bots on the [Recast.AI](https://recast.ai) platform.
-
-> **Note:** This project is currently in beta version and can be modified at any time.
+* Here, you'll learn how to build a bot with Facebook Messenger and Recast.AI.
+* If you don't know how to use Recast.AI, you can check this SDK first:  [Recast.AI-nodejs-SDK](https://github.com/RecastAI/SDK-NodeJs)
 
 ## Requirements
+* Create an account on [Recast.AI](https://recast.ai/signup).
+* Create an account on [Facebook Developers](https://developers.facebook.com/). (same account than your personal Facebook account)
 
-#### Node version
+## Set up your Recast.AI account
 
-We recommend to use at least `node v4.3.0`
+##### Create your bot
+
+* Log into your [Recast.AI](https://recast.ai/login) account.
+* Create a new bot.
+
+##### Get your token
+
+* In your profile, click your bot.
+* In the tab-menu, click on the the little screw.
+* Here is the `request access token` you will need to configure your bot.
+
+## Create your facebook page
+* [Create your page](https://www.facebook.com/pages/create/?ref_type=logout_gear).
+
+ [facebook]: https://raw.githubusercontent.com/RecastAI/bot-messenger/master/ressources/S%C3%A9lection_021.png "Creating you page"
+
+![alt text][facebook]
+* Choose the category of your page.
+* Fill out the Facebook requirements step by step.
+
+[facebook-set-up]: https://raw.githubusercontent.com/RecastAI/bot-messenger/master/ressources/S%C3%A9lection_022.png "Steup of your page"
+
+![alt text][facebook-set-up]
+
+## Set up your facebook account
+
+* Log on to your Facebook Developers account.
+* Create a new Facebook app.
+
+[facebook-first]: https://raw.githubusercontent.com/RecastAI/bot-messenger/master/ressources/S%C3%A9lection_028.png "first page"
+![alt text][facebook-first]
 
 
-#### Recast.AI account
+* Get your app secret and ID [Dashboard](https://developers.facebook.com/apps/258158857911674/dashboard/).
 
-Create an account on the [Recast.AI](https://recast.ai) platform and follow this [quick tutorial](https://recast.ai/gettingstarted) to create your first bot on the interface.
+[facebook-app]: https://raw.githubusercontent.com/RecastAI/bot-messenger/master/ressources/S%C3%A9lection_025.png  "Creating you page"
 
-## Usage
+![alt text][facebook-app]
 
+* Get your page Token [Messenger](https://developers.facebook.com/apps/258158857911674/messenger/).
 
-#### Installation
+[facebook-pageToken]: https://raw.githubusercontent.com/RecastAI/bot-messenger/master/ressources/S%C3%A9lection_026.png "Creating you page"
 
-`git clone https://github.com/RecastAI/starter-NodeJS.git my-bot && cd my-bot`
+![alt text][facebook-pageToken]
 
-using npm
-`npm install`
-
-or yarn
-`yarn`
-
-
-#### Create the config file
-
- Create a `config.js` file in the `src` directory of your project, copy/paste these lines:
-
-```javascript
-process.env.PORT = '5000'
-process.env.REQUEST_TOKEN = ''
-process.env.LANGUAGE = ''
-// Write your own configuration here:
-// ...
+## Start your bot in local
+```bash
+git clone https://github.com/RecastAI/bot-messenger.git
 ```
 
-Complete the Recast.AI `process.env.REQUEST_TOKEN` and `process.env.LANGUAGE`: go to your bot page, click on the settings icon (on the right side of your screen), and copy the `request_token`.
-Then, set the default language of your bot: `'en'`, `'fr'`... or leave this field empty for auto-detection language
+#### Ngrok
 
-Tips: This config. file will never be pushed onto your repository. If you would like to deploy your code with **Bot Hosting**, you just have to create env. variables in **Bot Hosting** section in **RUN** page. More info in [About your config. file](https://github.com/RecastAI/starter-NodeJS#about-your-config-file)
+* Download the appropriate version of [Ngrok](https://ngrok.com/download).
+* Open a new tab in your terminal:
+```
+./ngrok http 5000
+```
+* Copy past the ``` https://*******ngrok.io``` you get, you will need it for the next step.
+* Leave your Ngrok serveur running.
 
+## Complete the config.js
 
-#### Run locally
+* Copy your Recast.AI `Recast.AI access token`
+* Copy your page access Token `Token of your Page`
+* Set your validationToken with the string you want. This token will be used later in this tutorial.
 
-using npm `npm start`
+```bash
+vim config.js
+```
+```javascript
+const config = {}
 
-using yarn `yarn start`
+config.pageAccessToken = 'PAGE_TOKEN'
+config.validationToken = 'ABCD1234'
+config.recastToken = 'RECAST_TOKEN'
+config.language = 'en'
 
-> **Note:** Next steps, only if you have connected your bot to channels, using the Bot Connector tool
+module.exports = config
 
-- download [ngrok](https://ngrok.com/)
-- launch it: `./ngrok http 5000`
-- copy the url ngrok gave and paste it in the [Recast.AI](https://recast.ai) interface: Go to your bot page, click on the **RUN** tab and edit your `current bot webhook`
-- Chat with your bot on the channels you've configured ;)
+```
 
-#### Alternative, if you are not using **Bot Connector**
+## Launching your Bot
 
-If you're not using the Bot Connector to connect your bot to the channels, you will only need to change the `bot.js` file and the `message.js` file and make changes depending on the way you want to receive the message.
+* make sure to have ngrok launched and the correct URL in you config file.
 
-## Documentation
+```bash
+npm install
+npm start
+```
 
-Code | Documentation
------------- | -------------
-Receiving messages | [The Recast.AI SDK](https://github.com/RecastAI/SDK-NodeJS/wiki) - connect
-Sending messages | [The Recast.AI SDK](https://github.com/RecastAI/SDK-NodeJS/wiki) - connect
-Rich messaging | See the different [payload message](https://man.recast.ai)
-Manage the conversation | [The Recast.AI SDK](https://github.com/RecastAI/SDK-NodeJS/wiki) - converse
+#### Config webhook
 
+* go back to the Facebook Developer page and add a new webhook.
 
-## How your code will be deployed?
+[webhook1]: https://cdn.recast.ai/man/recast-ai-messenger-9.png "Webhook1 page"
+![alt text][webhook1]
 
-To host your bot and deploy your code, create a repository on Github, and push this code on it.
-Connect your github account on Recast:
+* Paste the ngrok https url and paste the verify token of your config file.
 
-- Go to your bot page
-- Click on the **RUN** tab, and on the **Bot Hosting** menu
-- Connect your Github account
-- Select the repository you've just created
-- Wait a little, we're starting your instance...
+[webhook]: https://cdn.recast.ai/man/recast-ai-messenger-2.png "Webhook page"
+![alt text][webhook]
 
-Every time you will push onto the master branch, we'll deploy your code :clap:
+* Subscribe your page to the webhook you just created.
 
-#### Requirements
+[suscribe]: https://raw.githubusercontent.com/RecastAI/bot-messenger/master/ressources/S%C3%A9lection_024.png "Subscribe page"
 
-Since we deploy your code your code in generic containers, there are 3 requirements:
+![alt text][suscribe]
 
-- [x] Your package.json **must** contain the `build` task. It must be present even if empty or just copying files. The default one you will find in the starter kit is `"build": "babel src -d lib"` to compile your Javascript. So you can code with your favorite ES6, ES7 features :thumbsup:
-- [x] A lib directory must be present (by default it's created with the `build` task)
-- [x] The entrypoint of your code in production **must** be in the `lib/bot.js` file. This file **must** contain an export of a `bot` function named `bot`. It takes as the first argument the body of the request (Bot Connector, custom curl,...)
+## Result
 
-You can change all other file names, directory structures, but be sure that these three points work fine!
+[result]: https://raw.githubusercontent.com/RecastAI/bot-messenger/master/ressources/S%C3%A9lection_023.png
 
-#### About your config. file
+![alt text][result]
 
-The `src/config.js` file will never be pushed to your repository, to keep your configuration private.
+## Your bot
 
-To set up your local env. variables in **Bot Hosting**, you have to create env. variables in **Bot Hosting** section in the **RUN** page.
+#### SDK usage
+* All you need for your bot is in the bot.js file. The call to Recast.AI is already done.
+* ```client.request.converseText(message.body, { conversationToken: senderID })``` To use this method you need to pass the user's input, and  a unique conversation token. This token can be the senderId of the messenger chat. This token will create for each users a specific conversation with your bot.
+* ```res.reply()``` To get the first reply of your bot.
+* ```res.replies``` To get an array of all your replies.
+* ``` res.action``` Get the object action. When an action is complete you will have the ```action.done = true ``` and you will be able to trigger a specific behavior.
 
-`PORT` env. variable is not needed. **Bot Hosting** manages it for you :)
+#### Start-kit helpers
+* ```replyMessage(senderID,YOUR_TEXT)``` to send a basic text message.
+* ```replyButton(senderID, options)``` to send a basic button, if you want a more complete button I advise to check the function replyButton in the bot.js file && the [Faceboook doc for button] (https://developers.facebook.com/docs/messenger-platform/send-api-reference#message).
 
-`REQUEST_TOKEN` and `LANGUAGE` env. variables are already set up with your bot configuration. `LANGUAGE` can be customised with the one you want (`en`, `fr`, ...)
+```javascript
+function handleMessage(event) {
+  const senderID = event.sender.id
+  const messageText = event.message.text
+  const messageAttachments = event.message.attachments
+  if (messageText) {
+    client.request.converseText(messageText, { conversationToken: senderID }).then((res) => {
+      const reply = res.reply()               /* To get the first reply of your bot. */
+      const replies = res.replies             /* An array of all your replies */
+      const action = res.action               /* Get the object action. You can use 'action.done' to trigger a specification action when it's at true. */
 
-You can add any env. variable you want in the **Bot Hosting** section and then use it in your code with this syntax: `process.env.MY_ENV_VAR_NAME`
+      if (!reply) {
+        const options = {
+          messageText: null,
+          buttonTitle: 'My first button',    /* Option of your button. */
+          buttonUrl: 'https://recast.ai/',   /* If you like more option check out ./facebook.js the function replyButton, and look up */
+          buttonType: 'web_url',             /* the facebook doc for button https://developers.facebook.com/docs/messenger-platform/send-api-reference#message */
+          elementsTitle: 'I don\'t get it :(',
+        }
+        replyButton(senderID, options)        /* to reply a button */
+      } else {
+        if (action && action.done === true) {
+          console.log('action is done')
+          // Use external services: use res.memory('notion') if you got a notion from this action
+        }
+        let promise = Promise.resolve()
+        replies.forEach(rep => {
+          promise = promise.then(() => replyMessage(senderID,rep))
+        })
+        promise.then(() => {
+          console.log('ok')
+        })
+      }
+    }).catch(err => {
+      console.log(err)
+    })
+  } else if (messageAttachments) {
+    replyMessage(senderID, 'Message with attachment received')
+  }
+}
+```
+* Have fun coding your bot! :)
 
-## More
+## Author
 
-You can view the whole API reference at [man.recast.ai](https://man.recast.ai).
+Henri Floren - Recast.AI
+henri.floren@recast.ai
+
+Marian André - Recast.AI
+marian.andre@recast.ai
+
 You can follow us on Twitter at [@recastai](https://twitter.com/recastai) for updates and releases.
 
 ## License
 
-Copyright (c) [2017] [Recast.AI](https://recast.ai)
+Copyright (c) [2016] [Recast.AI](https://recast.ai)
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
