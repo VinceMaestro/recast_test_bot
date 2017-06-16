@@ -1,0 +1,22 @@
+{
+  "name": "recast_test_bot",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/VinceMaestro/recast_test_bot.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/VinceMaestro/recast_test_bot/issues"
+  },
+  "homepage": "https://github.com/VinceMaestro/recast_test_bot#readme",
+  "dependencies": {
+    "recastai": "^3.4.1"
+  }
+}
