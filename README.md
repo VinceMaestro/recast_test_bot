@@ -1,14 +1,15 @@
-# Chuck Norris Bot
+# Recast.AI starter kit NodeJS
 
-A simple chuck norris bot using Recast.AI's Bot Hosting
+A starter kit for developing bots on the [Recast.AI](https://recast.ai) platform.
 
-Check out the corresponding tutorial at https://blog.recast.ai/master-bot-hosting/.
+> **Note:** This project is currently in beta version and can be modified at any time.
 
 ## Requirements
 
 #### Node version
 
 We recommend to use at least `node v4.3.0`
+
 
 #### Recast.AI account
 
@@ -19,7 +20,7 @@ Create an account on the [Recast.AI](https://recast.ai) platform and follow this
 
 #### Installation
 
-`git clone git@github.com:RecastAI/starter-NodeJS.git my-bot && cd my-bot`
+`git clone https://github.com/RecastAI/starter-NodeJS.git my-bot && cd my-bot`
 
 using npm
 `npm install`
